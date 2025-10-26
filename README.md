@@ -136,12 +136,8 @@ CloudFront will provide a bucket policy. Copy it and:
 2. Edit **Bucket Policy**
 3. Paste the CloudFront policy
 4. Save changes
+ 
 
-## 🧠 Future Improvements
-- Add CI/CD pipeline (GitHub Actions → AWS S3)
-- Integrate AWS Lambda for contact form (email sending)
-- Add light/dark theme toggle
-- Optimize images with Next.js Image component
 ### Step 8: Configure Custom Error Pages (Optional)
 
 In CloudFront distribution settings:
@@ -189,6 +185,12 @@ After making changes:
 2. **Request SSL certificate** in AWS Certificate Manager (us-east-1 region)
 3. **Add CNAME** to CloudFront distribution settings
 4. **Update DNS** records to point to CloudFront domain
+
+## 🧠 Future Improvements
+- Add CI/CD pipeline (GitHub Actions → AWS S3)
+- Integrate AWS Lambda for contact form (email sending)
+- Add light/dark theme toggle
+- Optimize images with Next.js Image component
 
 ## ♿ Accessibility
 
