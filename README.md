@@ -1,5 +1,5 @@
 # Abdelrahman Mahmoud - Portfolio Website
-
+👋 Hi, I'm Abdelrahman Mahmoud — a DevOps & Cloud Engineer passionate about automation, infrastructure, and building modern web applications.
 A modern, responsive portfolio website built with Next.js, showcasing DevOps and Cloud Engineering projects with a stunning dark theme featuring glassmorphism effects and blue-purple gradients.
 
 ## 🚀 Features
@@ -137,6 +137,11 @@ CloudFront will provide a bucket policy. Copy it and:
 3. Paste the CloudFront policy
 4. Save changes
 
+## 🧠 Future Improvements
+- Add CI/CD pipeline (GitHub Actions → AWS S3)
+- Integrate AWS Lambda for contact form (email sending)
+- Add light/dark theme toggle
+- Optimize images with Next.js Image component
 ### Step 8: Configure Custom Error Pages (Optional)
 
 In CloudFront distribution settings:
