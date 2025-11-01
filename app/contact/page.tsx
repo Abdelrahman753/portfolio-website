@@ -70,7 +70,7 @@ export default function ContactPage() {
                 <p className="text-muted-foreground leading-relaxed">
                   I'm always interested in hearing about new projects and opportunities in DevOps, cloud infrastructure,
                   and automation. Whether you need help with AWS architecture, CI/CD pipelines, or infrastructure as
-                  code, feel free to reach out!abdo shahin
+                  code, feel free to reach out!
                 </p>
               </Card>
             </div>
