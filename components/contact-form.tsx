@@ -6,7 +6,9 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Send } from "lucide-react"
+import { Send, Loader2 } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
+import { submitContactForm } from "@/lib/api"
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -15,7 +17,8 @@ export function ContactForm() {
     message: "",
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { toast } = useToast()
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -40,17 +43,32 @@ export function ContactForm() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('API URL:', process.env.NEXT_PUBLIC_API_GATEWAY_URL)
 
     if (validateForm()) {
-      // In a real application, you would send this data to a backend
-      console.log("Form submitted:", formData)
-      setSubmitted(true)
-      setFormData({ name: "", email: "", message: "" })
-
-      // Reset success message after 5 seconds
-      setTimeout(() => setSubmitted(false), 5000)
+      setIsSubmitting(true)
+      try {
+        console.log('Submitting form data:', formData)
+        const response = await submitContactForm(formData)
+        console.log('Response:', response)
+        toast({
+          title: "Message sent successfully!",
+          description: "Thank you for your message. I'll get back to you soon.",
+          variant: "default",
+        })
+        setFormData({ name: "", email: "", message: "" })
+      } catch (error) {
+        console.error('Form submission error:', error)
+        toast({
+          title: "Error sending message",
+          description: error instanceof Error ? error.message : "Please try again later",
+          variant: "destructive",
+        })
+      } finally {
+        setIsSubmitting(false)
+      }
     }
   }
 
@@ -112,15 +130,23 @@ export function ContactForm() {
         {errors.message && <p className="text-sm text-destructive">{errors.message}</p>}
       </div>
 
-      {submitted && (
-        <div className="p-4 rounded-lg bg-primary/20 text-primary border border-primary/30">
-          Thank you for your message! I'll get back to you soon.
-        </div>
-      )}
-
-      <Button type="submit" size="lg" className="w-full">
-        <Send className="mr-2 h-5 w-5" />
-        Send Message
+      <Button 
+        type="submit" 
+        size="lg" 
+        className="w-full" 
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <>
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            Sending...
+          </>
+        ) : (
+          <>
+            <Send className="mr-2 h-5 w-5" />
+            Send Message
+          </>
+        )}
       </Button>
     </form>
   )

@@ -1,6 +1,7 @@
 import { ContactForm } from "@/components/contact-form"
 import { Card } from "@/components/ui/card"
 import { Github, Linkedin, Mail } from "lucide-react"
+import { ApiDebugInfo } from "@/components/api-debug-info"
 
 export default function ContactPage() {
   return (
@@ -18,6 +19,7 @@ export default function ContactPage() {
             {/* Contact Form */}
             <Card className="glass-card p-8">
               <h2 className="text-2xl font-bold mb-6 text-primary">Send a Message</h2>
+              <ApiDebugInfo />
               <ContactForm />
             </Card>
 
