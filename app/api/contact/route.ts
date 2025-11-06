@@ -1,31 +1,13 @@
-import { NextResponse } from 'next/server'
+/**
+ * This file used to be a server-side API proxy. For a static-only deployment
+ * (for example hosting on S3) we don't run server handlers. Instead this
+ * module exposes the configured API Gateway URL as a build-time constant so
+ * client code can import it and send directly to the public API.
+ *
+ * Note: HTTP handlers under `app/api` won't run on purely static hosts.
+ */
 
-export async function POST(req: Request) {
-  try {
-    const target = process.env.NEXT_PUBLIC_API_GATEWAY_URL
-    if (!target) {
-      return NextResponse.json({ message: 'API Gateway URL not configured on server' }, { status: 500 })
-    }
+export const CONTACT_API_URL = process.env.NEXT_PUBLIC_API_GATEWAY_URL ??
+  'https://i55zopetdd.execute-api.us-east-1.amazonaws.com/prod/contact'
 
-    const body = await req.text()
-
-    const res = await fetch(target, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body,
-    })
-
-    const text = await res.text()
-
-    const responseHeaders = new Headers()
-    const contentType = res.headers.get('content-type')
-    if (contentType) responseHeaders.set('content-type', contentType)
-
-    return new NextResponse(text, { status: res.status, headers: responseHeaders })
-  } catch (err) {
-    console.error('Proxy error:', err)
-    return NextResponse.json({ message: 'Proxy failed', error: String(err) }, { status: 500 })
-  }
-}
+export default CONTACT_API_URL
