@@ -148,6 +148,8 @@ export default function ContactFormStandalone(): JSX.Element {
           type="submit"
           disabled={isSubmitting}
           onClick={handleButtonClick}
+          // enforce pointer events and bring button above overlays if any
+          style={{ pointerEvents: isSubmitting ? 'none' : 'auto', position: 'relative', zIndex: 20 }}
           className={`w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-95 disabled:opacity-60`}
         >
           {isSubmitting ? (
@@ -159,6 +161,19 @@ export default function ContactFormStandalone(): JSX.Element {
           {isSubmitting ? "Sending..." : "Send Message"}
         </button>
       </div>
+      {/* Debug helper: visible on all environments — if clicks are swallowed by overlays this will help testing */}
+      <button
+        onClick={async (e) => {
+          e.preventDefault()
+          console.log('Debug: floating test button clicked')
+          // call submit logic directly
+          await handleSubmit({ preventDefault: () => {} } as unknown as React.FormEvent)
+        }}
+        aria-hidden={false}
+        style={{ position: 'fixed', right: 16, bottom: 16, zIndex: 9999, padding: '8px 12px', borderRadius: 8, background: '#111827', color: '#fff' }}
+      >
+        Debug: Send
+      </button>
     </form>
   )
 }
