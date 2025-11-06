@@ -45,14 +45,11 @@ export function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('API URL:', process.env.NEXT_PUBLIC_API_GATEWAY_URL)
 
     if (validateForm()) {
       setIsSubmitting(true)
       try {
-        console.log('Submitting form data:', formData)
         const response = await submitContactForm(formData)
-        console.log('Response:', response)
         toast({
           title: "Message sent successfully!",
           description: "Thank you for your message. I'll get back to you soon.",
@@ -82,72 +79,81 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-2">
-        <label htmlFor="name" className="text-sm font-medium">
-          Name
-        </label>
-        <Input
-          id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Your name"
-          className={errors.name ? "border-destructive" : ""}
-        />
-        {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
-      </div>
+    <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
+      <div className="space-y-8 bg-card p-8 rounded-xl shadow-lg border border-border/40 backdrop-blur-sm animate-fadeIn">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Get in Touch</h2>
+          <p className="text-muted-foreground">I'd love to hear from you. Send me a message and I'll respond as soon as possible.</p>
+        </div>
+        
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label htmlFor="name" className="text-base font-semibold text-foreground/90">
+              Name
+            </label>
+            <Input
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Your name"
+              className={`${errors.name ? "border-destructive" : ""} transition-all duration-200 hover:border-primary/50 focus:border-primary`}
+            />
+            {errors.name && <p className="text-sm text-destructive mt-1">{errors.name}</p>}
+          </div>
 
-      <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium">
-          Email
-        </label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="your.email@example.com"
-          className={errors.email ? "border-destructive" : ""}
-        />
-        {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
-      </div>
+          <div className="space-y-2">
+            <label htmlFor="email" className="text-base font-semibold text-foreground/90">
+              Email
+            </label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="your.email@example.com"
+              className={`${errors.email ? "border-destructive" : ""} transition-all duration-200 hover:border-primary/50 focus:border-primary`}
+            />
+            {errors.email && <p className="text-sm text-destructive mt-1">{errors.email}</p>}
+          </div>
 
-      <div className="space-y-2">
-        <label htmlFor="message" className="text-sm font-medium">
-          Message
-        </label>
-        <Textarea
-          id="message"
-          name="message"
-          value={formData.message}
-          onChange={handleChange}
-          placeholder="Tell me about your project or inquiry..."
-          rows={6}
-          className={errors.message ? "border-destructive" : ""}
-        />
-        {errors.message && <p className="text-sm text-destructive">{errors.message}</p>}
-      </div>
+          <div className="space-y-2">
+            <label htmlFor="message" className="text-base font-semibold text-foreground/90">
+              Message
+            </label>
+            <Textarea
+              id="message"
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              placeholder="Tell me about your project or inquiry..."
+              rows={6}
+              className={`${errors.message ? "border-destructive" : ""} transition-all duration-200 hover:border-primary/50 focus:border-primary resize-none`}
+            />
+            {errors.message && <p className="text-sm text-destructive mt-1">{errors.message}</p>}
+          </div>
 
-      <Button 
-        type="submit" 
-        size="lg" 
-        className="w-full" 
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Sending...
-          </>
-        ) : (
-          <>
-            <Send className="mr-2 h-5 w-5" />
-            Send Message
-          </>
-        )}
-      </Button>
+          <Button 
+            type="submit" 
+            size="lg" 
+            className="w-full bg-primary hover:bg-primary/90 transition-colors duration-200" 
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send className="mr-2 h-5 w-5" />
+                Send Message
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
     </form>
   )
 }
