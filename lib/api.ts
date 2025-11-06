@@ -5,7 +5,11 @@ interface ContactFormData {
 }
 
 export async function submitContactForm(formData: ContactFormData) {
-  const API_ENDPOINT = process.env.NEXT_PUBLIC_API_GATEWAY_URL;
+  // In development, proxy through Next.js to avoid CORS issues (server-side fetch).
+  // In production, call the API Gateway URL directly.
+  const API_ENDPOINT = process.env.NODE_ENV === 'development'
+    ? '/api/contact'
+    : process.env.NEXT_PUBLIC_API_GATEWAY_URL;
   
   if (!API_ENDPOINT) {
     console.error('API Gateway URL is missing in environment variables');
@@ -59,16 +63,26 @@ export async function submitContactForm(formData: ContactFormData) {
     }
 
     return responseData;
-  } catch (error) {
-    console.error('Error submitting form:', {
-      error,
-      message: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
-    });
-    
-    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+  } catch (error: unknown) {
+    // Normalize error information for logging (avoid passing `unknown` directly into console as a structured object)
+    const errorInfo = error instanceof Error
+      ? { message: error.message, stack: error.stack }
+      : { message: String(error) };
+
+    // Log a safe string representation to avoid any environment-specific console typing issues
+    try {
+      console.error('Error submitting form: ' + JSON.stringify(errorInfo));
+    } catch (e) {
+      // Fallback if stringify fails for any reason
+      console.error('Error submitting form:', errorInfo);
+    }
+
+    if (error instanceof TypeError && typeof error.message === 'string' && error.message.includes('Failed to fetch')) {
       throw new Error('Unable to reach the server. Please check your connection and try again.');
     }
-    throw error;
+
+    // Re-throw the original error so callers can inspect it; if it's not an Error, wrap it.
+    if (error instanceof Error) throw error;
+    throw new Error(String(error));
   }
 }
