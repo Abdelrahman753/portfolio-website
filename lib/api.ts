@@ -5,11 +5,9 @@ interface ContactFormData {
 }
 
 export async function submitContactForm(formData: ContactFormData) {
-  // In development, proxy through Next.js to avoid CORS issues (server-side fetch).
-  // In production, call the API Gateway URL directly.
-  const API_ENDPOINT = process.env.NODE_ENV === 'development'
-    ? '/api/contact'
-    : process.env.NEXT_PUBLIC_API_GATEWAY_URL;
+  // Use the public API Gateway URL directly so this helper is static-friendly.
+  // You can set NEXT_PUBLIC_API_GATEWAY_URL at build time to change the endpoint.
+  const API_ENDPOINT = process.env.NEXT_PUBLIC_API_GATEWAY_URL ?? 'https://i55zopetdd.execute-api.us-east-1.amazonaws.com/prod/contact';
   
   if (!API_ENDPOINT) {
     console.error('API Gateway URL is missing in environment variables');
