@@ -94,11 +94,13 @@ export default function ContactFormStandalone() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {serverMessage && (
-        <Alert variant={serverMessage.type === "success" ? "default" : "destructive"}>
-          <AlertDescription>{serverMessage.text}</AlertDescription>
-        </Alert>
-      )}
+        {serverMessage && (
+          <Alert variant={serverMessage.type === "success" ? "default" : "destructive"}>
+            <AlertDescription className={serverMessage.type === "success" ? "text-green-500" : ""}>
+              {serverMessage.text}
+            </AlertDescription>
+          </Alert>
+        )}
 
       <div className="space-y-4">
         <label htmlFor="name" className="block text-sm font-medium text-foreground">
