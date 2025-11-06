@@ -44,6 +44,7 @@ export default function ContactFormStandalone(): JSX.Element {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('handleSubmit invoked', { form })
     setServerMessage(null)
     if (!validate()) return
 
@@ -83,6 +84,14 @@ export default function ContactFormStandalone(): JSX.Element {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  // Fallback click handler in case form submit isn't firing (helps debug overlays or event capture issues)
+  const handleButtonClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    console.log('button click received')
+    // Call the same submit logic
+    await handleSubmit(e as unknown as React.FormEvent)
   }
 
   return (
@@ -138,6 +147,7 @@ export default function ContactFormStandalone(): JSX.Element {
         <button
           type="submit"
           disabled={isSubmitting}
+          onClick={handleButtonClick}
           className={`w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-95 disabled:opacity-60`}
         >
           {isSubmitting ? (
