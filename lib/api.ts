@@ -15,15 +15,6 @@ export async function submitContactForm(formData: ContactFormData) {
   }
 
   const requestBody = JSON.stringify(formData);
-  console.log('Request details:', {
-    url: API_ENDPOINT,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    body: requestBody,
-  });
 
   try {
     const response = await fetch(API_ENDPOINT, {
@@ -41,17 +32,10 @@ export async function submitContactForm(formData: ContactFormData) {
     try {
       responseData = JSON.parse(responseText);
     } catch (e) {
-      console.error('Failed to parse response as JSON:', responseText);
+      // Non-JSON response is expected in some error cases; keep a minimal console.warn for debugging only
+      console.warn('Failed to parse response as JSON');
       responseData = null;
     }
-
-    console.log('Response details:', {
-      status: response.status,
-      statusText: response.statusText,
-      headers: Object.fromEntries(response.headers.entries()),
-      data: responseData,
-      rawText: responseText
-    });
 
     if (!response.ok) {
       const errorMessage = responseData?.message || 
@@ -69,10 +53,10 @@ export async function submitContactForm(formData: ContactFormData) {
 
     // Log a safe string representation to avoid any environment-specific console typing issues
     try {
+      // Keep a single informative error log for debugging in non-production environments
       console.error('Error submitting form: ' + JSON.stringify(errorInfo));
     } catch (e) {
-      // Fallback if stringify fails for any reason
-      console.error('Error submitting form:', errorInfo);
+      console.error('Error submitting form');
     }
 
     if (error instanceof TypeError && typeof error.message === 'string' && error.message.includes('Failed to fetch')) {

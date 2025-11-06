@@ -20,7 +20,7 @@ type ServerMessage = {
 
 const API_URL = process.env.NEXT_PUBLIC_API_GATEWAY_URL ?? "https://i55zopetdd.execute-api.us-east-1.amazonaws.com/prod/contact"
 
-export default function ContactFormStandalone() {
+export default function ContactFormStandalone(): JSX.Element {
   const [form, setForm] = useState<ContactFormData>({ name: "", email: "", message: "" })
   const [errors, setErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
