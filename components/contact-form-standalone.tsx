@@ -95,8 +95,11 @@ export default function ContactFormStandalone() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
         {serverMessage && (
-          <Alert variant={serverMessage.type === "success" ? "default" : "destructive"}>
-            <AlertDescription className={serverMessage.type === "success" ? "text-green-500" : ""}>
+          <Alert
+            variant={serverMessage.type === "success" ? "default" : "destructive"}
+            className={serverMessage.type === "success" ? "bg-green-600 border-transparent" : ""}
+          >
+            <AlertDescription className={serverMessage.type === "success" ? "text-white" : ""}>
               {serverMessage.text}
             </AlertDescription>
           </Alert>
