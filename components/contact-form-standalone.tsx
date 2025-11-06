@@ -13,7 +13,9 @@ type ServerMessage = {
   text: string
 } | null
 
-const API_URL = "https://i55zopetdd.execute-api.us-east-1.amazonaws.com/prod/contact"
+// Use the public API Gateway URL directly so the form works as a static site.
+// If you set NEXT_PUBLIC_API_GATEWAY_URL at build time it will be used; otherwise we fall back to the known endpoint.
+const API_URL = process.env.NEXT_PUBLIC_API_GATEWAY_URL ?? "https://i55zopetdd.execute-api.us-east-1.amazonaws.com/prod/contact"
 
 export default function ContactFormStandalone(): JSX.Element {
   const [form, setForm] = useState<ContactFormData>({ name: "", email: "", message: "" })
