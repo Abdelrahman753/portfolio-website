@@ -26,11 +26,10 @@
  - User (browser) → CloudFront → S3 (static site)
  - Contact form (client) → API Gateway (public endpoint) → Lambda → SES → Recipient inbox
  - CI/CD: GitHub Actions → build & export → sync to S3 → invalidate CloudFront
+ 
+```
+![Architecture](docs/architecture.svg)
 
- Add a diagram to `docs/architecture.png` and reference it here:
-
- ```markdown
- ![Architecture diagram](docs/architecture.svg)
  ```
 ## ✨ Features
 
