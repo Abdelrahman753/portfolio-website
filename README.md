@@ -27,10 +27,10 @@
  - Contact form (client) → API Gateway (public endpoint) → Lambda → SES → Recipient inbox
  - CI/CD: GitHub Actions → build & export → sync to S3 → invalidate CloudFront
  
-```
+
 ![Architecture](docs/architecture.svg)
 
- ```
+ 
 ## ✨ Features
 
 - Static, globally distributed portfolio website
