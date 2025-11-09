@@ -21,14 +21,32 @@
 
  ## Architecture
 
- High level flow:
-
- - User (browser) → CloudFront → S3 (static site)
- - Contact form (client) → API Gateway (public endpoint) → Lambda → SES → Recipient inbox
- - CI/CD: GitHub Actions → build & export → sync to S3 → invalidate CloudFront
- 
-
 ![Architecture](docs/architecture.svg)
+
+### Detailed Architecture Flow
+
+**Static Site Delivery (CloudFront + S3)**
+- Users access the website through CloudFront CDN, which serves cached static assets for high performance and low latency
+- CloudFront uses an S3 bucket as its origin, serving a fully exported static Next.js website (next export)
+
+**CI/CD Pipeline (GitHub Actions)**
+- GitHub Actions automates deployments:
+  1. Checkout source code
+  2. Install Node.js and dependencies
+  3. Build and export the site
+  4. Upload static files to S3
+  5. Invalidate CloudFront cache to ensure immediate updates
+
+**Contact Form Flow (API Gateway + Lambda + SES)**
+- The contact form on the frontend posts directly to API Gateway using a public HTTPS endpoint
+- API Gateway triggers an AWS Lambda function that:
+  1. Parses form payload
+  2. Builds the email message
+  3. Sends the email using Amazon SES
+- Amazon SES delivers the message to the specified inbox
+
+**Infrastructure Region**
+- All infrastructure runs in the AWS region (us-east-1) for simplicity and reduced latency
 
  
 ## ✨ Features
