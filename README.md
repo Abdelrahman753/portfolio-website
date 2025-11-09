@@ -136,10 +136,7 @@
  - Create CloudFront invalidation
 
  ## Screenshots
-
-### Architecture Diagram
-![Architecture](docs/architecture.svg)
-
+ 
 ### Email delivered via SES
 ![Email Proof](docs/email-proof.png)
 
