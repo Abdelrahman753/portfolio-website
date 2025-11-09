@@ -1,244 +1,141 @@
-# Abdelrahman Mahmoud - Portfolio Website
-👋 Hi, I'm Abdelrahman Mahmoud — a DevOps & Cloud Engineer passionate about automation, infrastructure, and building modern web applications.
-A modern, responsive portfolio website built with Next.js, showcasing DevOps and Cloud Engineering projects with a stunning dark theme featuring glassmorphism effects and blue-purple gradients.
+ # Abdelrahman Mahmoud - Portfolio Website
 
-## 🚀 Features
+ A modern, responsive portfolio website built with Next.js and TailwindCSS. This repository is configured for static export and intended to be hosted on AWS S3 with CloudFront. The contact form posts directly to an AWS API Gateway endpoint which triggers a Lambda function that sends email through Amazon SES.
 
-- **Modern Design**: Dark theme with glassmorphism cards, gradient text, and smooth animations
-- **Fully Responsive**: Optimized for all devices from mobile to desktop
-- **SEO Optimized**: Proper meta tags, semantic HTML, and accessibility features
-- **Static Export Ready**: Configured for deployment to AWS S3 + CloudFront
-- **Performance**: Fast loading with optimized assets and Next.js optimizations
+ ## Table of Contents
 
-## 📋 Pages
+ - [Overview](#overview)
+ - [Architecture](#architecture)
+ - [Project structure](#project-structure)
+ - [Local development](#local-development)
+ - [Build & static export](#build--static-export)
+ - [Deploy to AWS S3 + CloudFront](#deploy-to-aws-s3--cloudfront)
+ - [Contact form (API Gateway → Lambda → SES)](#contact-form-api-gateway-→-lambda-→-ses)
+ - [CI/CD (GitHub Actions) example](#cicd-github-actions-example)
+ - [Troubleshooting](#troubleshooting)
+ - [Next steps](#next-steps)
 
-- **Home**: Hero section with professional photo and call-to-action buttons
-- **About**: Background, skills, certifications, and education
-- **Projects**: Showcase of technical projects with tech stack tags
-- **Contact**: Contact form with validation and contact information
+ ## Overview
 
-## 🛠️ Tech Stack
+ This site uses Next.js (App Router) with TailwindCSS and shadcn/ui components. It's optimized for a fast, static export (`next export`) so it can be served from S3 behind CloudFront. The contact form is implemented as a client-side POST to an API endpoint (set using `NEXT_PUBLIC_API_GATEWAY_URL`).
 
-- **Framework**: Next.js 15 (App Router)
-- **Styling**: TailwindCSS v4
-- **UI Components**: shadcn/ui
-- **Icons**: Lucide React
-- **Fonts**: Geist Sans & Geist Mono
-- **Deployment**: AWS S3 + CloudFront (static hosting)
+ ## Architecture
 
-## 🎨 Color Palette
+ High level flow:
 
-- Deep Navy: `#0b1226`
-- Blue-Purple Gradient: `#0f172a` → `#2b2e8a`
-- Cyan Accent: `#00d1ff`
-- Soft Glow: `rgba(0, 209, 255, 0.12)`
+ - User (browser) → CloudFront → S3 (static site)
+ - Contact form (client) → API Gateway (public endpoint) → Lambda → SES → Recipient inbox
+ - CI/CD: GitHub Actions → build & export → sync to S3 → invalidate CloudFront
 
-## 📦 Installation & Setup
+ Add a diagram to `docs/architecture.png` and reference it here:
 
-### Prerequisites
+ ```markdown
+ ![Architecture diagram](docs/architecture.svg)
+ ```
+## ✨ Features
 
-- Node.js 18+ installed
-- npm or yarn package manager
+- Static, globally distributed portfolio website
+- CloudFront CDN caching
+- SES-powered contact form
+- Fully serverless backend
+- Zero-downtime deployments
+- Automated invalidation
+- GitHub Actions CI/CD
 
-### Local Development
+ ## Project structure (key files)
 
-1. **Install dependencies**:
-   \`\`\`bash
-   npm install
-   \`\`\`
+ - `app/` — Next.js App Router pages
+ - `components/` — UI components (contact form, navbar, footer, project card)
+ - `components/ui/` — shared shadcn UI primitives
+ - `lib/utils.ts` — small helpers
+ - `aws/contact-form-lambda.ts` — example Lambda (SES email sender)
+ - `next.config.mjs` — Next.js configuration (set to `output: 'export'` for static export)
 
-2. **Run development server**:
-   \`\`\`bash
-   npm run dev
-   \`\`\`
+ ## 🛠️ Tech Stack
 
-3. **Open browser**:
-   Navigate to [http://localhost:3000](http://localhost:3000)
+- **Next.js** (App Router)
+- **TailwindCSS**
+- **Shadcn/UI**
+- **AWS S3**
+- **AWS CloudFront**
+- **AWS API Gateway**
+- **AWS Lambda**
+- **Amazon SES**
+- **GitHub Actions**
 
-### Build for Production
+ ## Local development
 
-1. **Create production build**:
-   \`\`\`bash
-   npm run build
-   \`\`\`
+ Prerequisites: Node.js 18+ and npm (or pnpm/yarn).
 
-2. **Test production build locally** (optional):
-   \`\`\`bash
-   npm start
-   \`\`\`
+ 1. Install dependencies:
 
-## 🌐 AWS S3 + CloudFront Deployment
+    npm install
 
-### Step 1: Configure Next.js for Static Export
+ 2. Run dev server:
 
-The project is already configured with `output: 'export'` in `next.config.mjs`. This generates a static `out/` folder.
+    npm run dev
 
-### Step 2: Build Static Files
+ 3. Open: http://localhost:3000
 
-\`\`\`bash
-npm run build
-\`\`\`
+ ## Build & static export
 
-This creates an `out/` directory with all static files.
+ 1. Build the project (creates static output):
 
-### Step 3: Create S3 Bucket
+    npm run build
 
-1. Go to AWS S3 Console
-2. Click "Create bucket"
-3. Choose a unique bucket name (e.g., `abdelrahman-portfolio`)
-4. Select your preferred region
-5. **Uncheck** "Block all public access" (we'll use CloudFront for access control)
-6. Create bucket
+ 2. The static files will be available in the `out/` folder (configured by `next export`).
 
-### Step 4: Configure S3 Bucket for Static Hosting
+ ## Deploy to AWS S3 + CloudFront
 
-1. Go to bucket → **Properties** tab
-2. Scroll to "Static website hosting"
-3. Click "Edit" and enable it
-4. Set **Index document**: `index.html`
-5. Set **Error document**: `404.html`
-6. Save changes
+ 1. Create an S3 bucket and enable static website hosting (index.html, 404.html).
+ 2. Upload `out/` contents to the bucket, for example via AWS CLI:
 
-### Step 5: Upload Files to S3
+    aws s3 sync out/ s3://your-bucket-name --delete
 
-Using AWS CLI:
+ 3. Create a CloudFront distribution using the S3 bucket as origin. Use an Origin Access Control (OAC) and set the default root object to `index.html`.
+ 4. Update bucket policy to allow CloudFront access. Optionally configure custom domain and ACM certificate.
+ 5. After updates, invalidate CloudFront cache:
 
-\`\`\`bash
-aws s3 sync out/ s3://your-bucket-name --delete
-\`\`\`
+    aws cloudfront create-invalidation --distribution-id YOUR_DIST_ID --paths "/*"
 
-Or use the AWS Console to upload the `out/` folder contents.
+ ## Contact form (API Gateway → Lambda → SES)
 
-### Step 6: Create CloudFront Distribution
+ - Frontend expects `NEXT_PUBLIC_API_GATEWAY_URL` to be set to your API Gateway POST endpoint.
+ - The Lambda example (`aws/contact-form-lambda.ts`) reads `RECIPIENT_EMAIL` and `SENDER_EMAIL` from environment variables and calls SES to send an email.
 
-1. Go to AWS CloudFront Console
-2. Click "Create Distribution"
-3. **Origin Settings**:
-   - Origin Domain: Select your S3 bucket
-   - Origin Access: Choose "Origin access control settings (recommended)"
-   - Create new OAC if needed
-4. **Default Cache Behavior**:
-   - Viewer Protocol Policy: "Redirect HTTP to HTTPS"
-   - Allowed HTTP Methods: GET, HEAD
-   - Cache Policy: "CachingOptimized"
-5. **Settings**:
-   - Price Class: Choose based on your needs
-   - Alternate Domain Names (CNAMEs): Add your custom domain if you have one
-   - SSL Certificate: Use default or add custom certificate
-   - Default Root Object: `index.html`
-6. Create distribution
+ Lambda notes:
+ - Ensure `SENDER_EMAIL` is verified in SES (or that your SES account is out of the sandbox).
+ - Lambda needs IAM permission: `ses:SendEmail` (and `ses:SendRawEmail` if you use raw payloads).
 
-### Step 7: Update S3 Bucket Policy
+ ## CI/CD (GitHub Actions) example
 
-CloudFront will provide a bucket policy. Copy it and:
+ A minimal workflow:
 
-1. Go to S3 bucket → **Permissions** tab
-2. Edit **Bucket Policy**
-3. Paste the CloudFront policy
-4. Save changes
- 
+ - Checkout
+ - Setup Node.js
+ - Install dependencies
+ - Build
+ - Upload artifacts or sync `out/` with AWS S3 (using `aws-actions/configure-aws-credentials` and `aws s3 sync`)
+ - Create CloudFront invalidation
 
-### Step 8: Configure Custom Error Pages (Optional)
+ ## Screenshots
 
-In CloudFront distribution settings:
+### Architecture Diagram
+![Architecture](docs/architecture.svg)
 
-1. Go to **Error Pages** tab
-2. Create custom error response:
-   - HTTP Error Code: 404
-   - Customize Error Response: Yes
-   - Response Page Path: `/404.html`
-   - HTTP Response Code: 404
+### Email delivered via SES
+![Email Proof](docs/email-proof.png)
 
-### Step 9: Wait for Deployment
+### CI/CD Pipeline (GitHub Actions)
+![GitHub Actions Pipeline](docs/github-actions.png)
 
-CloudFront deployment takes 10-20 minutes. Check status in the console.
 
-### Step 10: Access Your Site
+ ## Troubleshooting
 
-Once deployed, access your site via the CloudFront domain:
-\`\`\`
-https://d1234567890.cloudfront.net
-\`\`\`
+ - If emails aren't delivered: verify SES sender, check CloudWatch logs for Lambda errors, ensure API Gateway returns 200/2xx.
+ - If form fails on static site: ensure `NEXT_PUBLIC_API_GATEWAY_URL` is set in the hosting environment or in the build step.
+ - If CloudFront returns 403: check S3 bucket policy and OAC configuration.
 
-## 🔄 Updating Your Site
+ ---
 
-After making changes:
-
-1. **Rebuild**:
-   \`\`\`bash
-   npm run build
-   \`\`\`
-
-2. **Sync to S3**:
-   \`\`\`bash
-   aws s3 sync out/ s3://your-bucket-name --delete
-   \`\`\`
-
-3. **Invalidate CloudFront Cache**:
-   \`\`\`bash
-   aws cloudfront create-invalidation --distribution-id YOUR_DIST_ID --paths "/*"
-   \`\`\`
-
-## 🎯 Custom Domain Setup (Optional)
-
-1. **Register domain** (Route 53, GoDaddy, etc.)
-2. **Request SSL certificate** in AWS Certificate Manager (us-east-1 region)
-3. **Add CNAME** to CloudFront distribution settings
-4. **Update DNS** records to point to CloudFront domain
-
-## 🧠 Future Improvements
-- Add CI/CD pipeline (GitHub Actions → AWS S3)
-- Integrate AWS Lambda for contact form (email sending)
-- Add light/dark theme toggle
-- Optimize images with Next.js Image component
-
-## ♿ Accessibility
-
-- Semantic HTML elements (`<main>`, `<nav>`, `<footer>`)
-- ARIA labels for icon-only buttons
-- Alt text for all images
-- Keyboard navigation support
-- Sufficient color contrast ratios
-- Focus indicators for interactive elements
-
-## 📱 Mobile Testing
-
-Test on various devices:
-- iOS Safari (iPhone)
-- Android Chrome
-- Tablet devices
-- Desktop browsers (Chrome, Firefox, Safari, Edge)
-
-Use browser DevTools responsive mode for quick testing.
-
-## 🔧 Customization
-
-### Update Personal Information
-
-- Edit contact details in `app/contact/page.tsx`
-- Update social links in `components/navbar.tsx` and `components/footer.tsx`
-- Modify bio in `app/about/page.tsx`
-
-### Add/Remove Projects
-
-Edit the `projects` array in `app/projects/page.tsx`
-
-### Change Colors
-
-Modify color tokens in `app/globals.css` under the `:root` selector
-
-### Replace Profile Image
-
-Add your image to `public/` and update the image source in `app/page.tsx`
-
-## 📄 License
-
-This project is open source and available under the MIT License.
-
-## 🤝 Support
-
-For issues or questions, please open an issue on GitHub or contact via the website's contact form.
-
----
-
-Built with ❤️ using Next.js and TailwindCSS
+ Built with Next.js and TailwindCSS. If you'd like, I can also add a ready-to-use GitHub Actions workflow and a sample architecture PNG in `docs/`.
